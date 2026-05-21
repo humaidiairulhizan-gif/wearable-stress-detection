@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 
 # Flask API URL
-url = "http://127.0.0.1:5000/predict"
+url = "https://wearable-stress-api.onrender.com/predict"
 # url = "https://wearable-stress.onrender.com/predict"
 
 # Load WESAD feature data

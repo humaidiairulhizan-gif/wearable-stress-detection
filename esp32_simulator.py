@@ -4,7 +4,7 @@ import random
 from datetime import datetime
 
 # Flask API URL
-url = "http://127.0.0.1:5000/predict"
+url = "https://wearable-stress-api.onrender.com/predict"
 
 # Simulated device ID
 device_id = "ESP32_WRIST_01"
