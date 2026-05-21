@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wearable Stress Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+            padding: 30px;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 400px;
+            margin: auto;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .stress {
+            color: red;
+            font-weight: bold;
+        }
+
+        .nonstress {
+            color: green;
+            font-weight: bold;
+        }
+
+        .item {
+            margin: 10px 0;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Stress Monitoring Dashboard</h1>
+
+    <div class="item">
+        <strong>Device ID:</strong> {{ data.device_id }}
+    </div>
+
+    <div class="item">
+        <strong>Timestamp:</strong> {{ data.timestamp }}
+    </div>
+
+    <div class="item">
+        <strong>Heart Rate:</strong> {{ data.heart_rate }}
+    </div>
+
+    <div class="item">
+        <strong>HRV:</strong> {{ data.hrv }}
+    </div>
+
+    <div class="item">
+        <strong>Stress Probability:</strong>
+        {{ data.stress_probability }}
+    </div>
+
+    <div class="item">
+        <strong>Status:</strong>
+
+        {% if data.label == "Stress" %}
+            <span class="stress">{{ data.label }}</span>
+        {% else %}
+            <span class="nonstress">{{ data.label }}</span>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>
