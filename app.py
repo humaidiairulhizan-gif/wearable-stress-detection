@@ -3,6 +3,10 @@ import numpy as np
 import joblib
 import sqlite3
 
+recent_hr = []
+recent_gsr = []
+recent_stress = []
+
 # Store latest dashboard data
 latest_data = {}
 
@@ -125,11 +129,33 @@ def predict():
         latest_data = {
             "device_id": data.get("device_id", "Unknown"),
             "timestamp": data.get("timestamp", "N/A"),
+
             "heart_rate": data["heart_rate"],
             "hrv": data["hrv"],
+            "gsr": data["mean_eda"],
+
             "label": result,
-            "stress_probability": round(stress_probability, 2)
+
+            "stress_probability": round(stress_probability, 2),
+            "nonstress_probability": round(nonstress_probability, 2)
         }
+
+        # Store recent chart data
+        recent_hr.append(data["heart_rate"])
+        recent_gsr.append(data["mean_eda"])
+        recent_stress.append(round(stress_probability, 2))
+
+        # Keep only latest 20 values
+        if len(recent_hr) > 20:
+            recent_hr.pop(0)
+
+        if len(recent_gsr) > 20:
+            recent_gsr.pop(0)
+
+        if len(recent_stress) > 20:
+            recent_stress.pop(0)
+        
+
         # Save to database
         conn = sqlite3.connect("stress_data.db")
 
@@ -198,6 +224,18 @@ def predict():
         return jsonify({
             "error": str(e)
         })
+
+@app.route("/latest")
+def latest():
+    return jsonify(latest_data)
+
+@app.route("/recent")
+def recent():
+    return jsonify({
+        "heart_rate_history": recent_hr,
+        "gsr_history": recent_gsr,
+        "stress_probability_history": recent_stress
+    })
 
 # Run Flask app
 if __name__ == "__main__":
