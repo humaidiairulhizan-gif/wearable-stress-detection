@@ -4,8 +4,8 @@ import time
 from datetime import datetime
 
 # Flask API URL
-# url = "https://wearable-stress-api.onrender.com/predict"
-url = "http://127.0.0.1:5000/predict"
+url = "https://wearable-stress-api.onrender.com/predict"
+# url = "http://127.0.0.1:5000/predict"
 
 # Load WESAD feature data
 df = pd.read_csv("s6_stream_data.csv")
