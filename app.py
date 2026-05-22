@@ -10,6 +10,18 @@ recent_stress = []
 # Store latest dashboard data
 latest_data = {}
 
+# IMPORTANT:
+# Feature order MUST match training order exactly
+FEATURE_ORDER = [
+    "mean_eda",
+    "std_eda",
+    "eda_slope",
+    "mean_acc",
+    "var_acc",
+    "heart_rate",
+    "hrv"
+]
+
 # Initialize Flask app
 app = Flask(__name__)
 
@@ -95,17 +107,20 @@ def predict():
     try:
         # Get JSON data
         data = request.get_json()
+        # Required features
+        required_fields = FEATURE_ORDER
 
-        # Extract features in EXACT order
-        features = [
-            data["mean_eda"],
-            data["std_eda"],
-            data["eda_slope"],
-            data["mean_acc"],
-            data["var_acc"],
-            data["heart_rate"],
-            data["hrv"]
-        ]
+        # Check for missing fields
+        for field in required_fields:
+
+            if field not in data:
+
+                return jsonify({
+                    "error": f"Missing field: {field}"
+                }), 400
+
+        # Extract features in EXACT training order
+        features = [data[field] for field in FEATURE_ORDER]
 
         # Convert to numpy array
         features = np.array(features).reshape(1, -1)
