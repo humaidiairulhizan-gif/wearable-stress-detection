@@ -5,6 +5,7 @@ import sqlite3
 
 recent_hr = []
 recent_gsr = []
+recent_hrv = []
 recent_stress = []
 
 # Store latest dashboard data
@@ -158,16 +159,20 @@ def predict():
         # Store recent chart data
         recent_hr.append(data["heart_rate"])
         recent_gsr.append(data["mean_eda"])
+        recent_hrv.append(data["hrv"])
         recent_stress.append(round(stress_probability, 2))
 
-        # Keep only latest 20 values
-        if len(recent_hr) > 20:
+        # Keep only latest 10 values
+        if len(recent_hr) > 10:
             recent_hr.pop(0)
 
-        if len(recent_gsr) > 20:
+        if len(recent_gsr) > 10:
             recent_gsr.pop(0)
 
-        if len(recent_stress) > 20:
+        if len(recent_hrv) > 10:
+            recent_hrv.pop(0)
+
+        if len(recent_stress) > 10:
             recent_stress.pop(0)
         
 
