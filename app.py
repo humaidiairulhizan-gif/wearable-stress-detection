@@ -249,6 +249,7 @@ def recent():
     return jsonify({
         "heart_rate_history": recent_hr,
         "gsr_history": recent_gsr,
+        "hrv_history": recent_hrv,
         "stress_probability_history": recent_stress
     })
 
