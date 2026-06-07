@@ -1,7 +1,7 @@
 import requests
 
 # Flask API URL
-url = "http://127.0.0.1:5000/predict"
+url = "https://wearable-stress-api.onrender.com/predict"
 
 # Sample feature data
 data = {
