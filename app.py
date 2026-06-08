@@ -247,15 +247,88 @@ def predict():
 
 @app.route("/latest")
 def latest():
-    return jsonify(latest_data)
+
+    conn = sqlite3.connect("stress_data.db")
+    conn.row_factory = sqlite3.Row
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM stress_records
+        ORDER BY id DESC
+        LIMIT 1
+    """)
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    if row is None:
+        return jsonify({
+            "message": "No records found"
+        })
+
+    return jsonify({
+        "device_id": row["device_id"],
+        "timestamp": row["timestamp"],
+
+        "heart_rate": row["heart_rate"],
+        "hrv": row["hrv"],
+        "gsr": row["mean_eda"],
+
+        "label": row["label"],
+
+        "stress_probability":
+            round(row["stress_probability"], 2),
+
+        "nonstress_probability":
+            round(row["nonstress_probability"], 2)
+    })
 
 @app.route("/recent")
 def recent():
+
+    conn = sqlite3.connect("stress_data.db")
+    conn.row_factory = sqlite3.Row
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            heart_rate,
+            mean_eda,
+            hrv,
+            stress_probability
+
+        FROM stress_records
+
+        ORDER BY id DESC
+        LIMIT 10
+    """)
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    rows = rows[::-1]
+
     return jsonify({
-        "heart_rate_history": recent_hr,
-        "gsr_history": recent_gsr,
-        "hrv_history": recent_hrv,
-        "stress_probability_history": recent_stress
+
+        "heart_rate_history":
+            [row["heart_rate"] for row in rows],
+
+        "gsr_history":
+            [row["mean_eda"] for row in rows],
+
+        "hrv_history":
+            [row["hrv"] for row in rows],
+
+        "stress_probability_history":
+            [
+                round(row["stress_probability"], 2)
+                for row in rows
+            ]
     })
 
 # Run Flask app
