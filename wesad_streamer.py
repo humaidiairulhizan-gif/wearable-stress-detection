@@ -15,48 +15,50 @@ device_id = "ESP32_WESAD_S6"
 
 print("\nStarting WESAD Real Data Stream...\n")
 
-# Stream each row one by one
-for index, row in df.iterrows():
+while True:
 
-    sensor_data = {
+    # Stream each row one by one
+    for index, row in df.iterrows():
 
-        "device_id": device_id,
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        sensor_data = {
 
-        "mean_eda": float(row["mean_eda"]),
-        "std_eda": float(row["std_eda"]),
-        "eda_slope": float(row["eda_slope"]),
+            "device_id": device_id,
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
 
-        "mean_acc": float(row["mean_acc"]),
-        "var_acc": float(row["var_acc"]),
+            "mean_eda": float(row["mean_eda"]),
+            "std_eda": float(row["std_eda"]),
+            "eda_slope": float(row["eda_slope"]),
 
-        "heart_rate": float(row["heart_rate"]),
-        "hrv": float(row["hrv"])
-    }
+            "mean_acc": float(row["mean_acc"]),
+            "var_acc": float(row["var_acc"]),
 
-    try:
+            "heart_rate": float(row["heart_rate"]),
+            "hrv": float(row["hrv"])
+        }
 
-        # Send request
-        response = requests.post(url, json=sensor_data)
+        try:
 
-        result = response.json()
+            response = requests.post(url, json=sensor_data)
 
-        print("========================================")
-        print("Row:", index)
+            result = response.json()
 
-        print("Ground Truth:",
-              "Stress" if row["label"] == 1 else "Non-Stress")
+            print("========================================")
+            print("Row:", index)
 
-        print("Predicted:",
-              result["label"])
+            print("Ground Truth:",
+                  "Stress" if row["label"] == 1 else "Non-Stress")
 
-        print("Stress Probability:",
-              round(result["stress_probability"], 2))
+            print("Predicted:",
+                  result["label"])
 
-        print("========================================\n")
+            print("Stress Probability:",
+                  round(result["stress_probability"], 2))
 
-    except Exception as e:
-        print("Connection Error:", e)
+            print("========================================\n")
 
-    # Simulate real-time wearable transmission
-    time.sleep(2)
+        except Exception as e:
+            print("Connection Error:", e)
+
+        time.sleep(2)
+
+    print("\nReached end of dataset. Restarting stream...\n")
